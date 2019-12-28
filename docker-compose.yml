@@ -1,0 +1,34 @@
+version: "3"
+services:
+  mail:
+    image: tvial/docker-mailserver:latest
+    domainname: "mail.${DOMAIN}"
+    container_name: mail
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - $STACK_DATA/mail/data:/var/mail
+      - $STACK_DATA/mail/state:/var/mail-state
+      - $STACK_DATA/mail/logs:/var/log/mail
+      - $STACK_DATA/mail/config/:/tmp/docker-mailserver/
+    environment:
+      - ENABLE_SPAMASSASSIN=1
+      - ENABLE_CLAMAV=1
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=1
+      - ONE_DIR=1
+      - DMS_DEBUG=0
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+volumes:
+  maildata:
+    driver: local
+  mailstate:
+    driver: local
+  maillogs:
+    driver: local
